@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Bash(npm run install:all:*)",
+      "Bash(npm install)",
+      "Bash(docker compose:*)",
+      "Bash(npm run dev:*)",
+      "Bash(docker:*)",
+      "Bash(sudo apt:*)",
+      "Bash(sudo apt install:*)",
+      "Bash(apt:*)",
+      "Bash(npm install:*)"
+    ],
+    "deny": []
+  }
+}
