@@ -119,31 +119,46 @@ export default function BrowsePage() {
       <nav className="bg-black bg-opacity-20 backdrop-blur-lg border-b border-purple-500/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
+            <div className="flex items-center space-x-6">
               <button
                 onClick={() => router.push(user ? '/dashboard' : '/')}
-                className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400"
+                className="flex items-center space-x-2 group transition-all duration-200"
               >
-                Musga
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                  <span className="text-white font-bold text-sm">M</span>
+                </div>
+                <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                  Musga
+                </h1>
               </button>
+              <div className="hidden md:flex items-center space-x-4">
+                <div className="flex items-center space-x-1 text-purple-200">
+                  <span>🎵</span>
+                  <span>Browse Vocals</span>
+                </div>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               {user ? (
                 <>
                   <button
                     onClick={() => router.push('/dashboard')}
-                    className="text-purple-200 hover:text-white transition-colors"
+                    className="flex items-center space-x-1 text-purple-200 hover:text-white transition-colors duration-200"
                   >
-                    Dashboard
+                    <span>🏠</span>
+                    <span>Dashboard</span>
                   </button>
-                  <span className="text-purple-200">Welcome, {user.firstName}</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-purple-200">👋</span>
+                    <span className="text-purple-200">Welcome, {user.firstName}</span>
+                  </div>
                 </>
               ) : (
                 <button
                   onClick={() => router.push('/auth')}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105"
                 >
-                  Sign In
+                  🚀 Sign In
                 </button>
               )}
             </div>

@@ -121,22 +121,37 @@ export default function UploadPage() {
       <nav className="bg-black bg-opacity-20 backdrop-blur-lg border-b border-purple-500/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
+            <div className="flex items-center space-x-6">
               <button
                 onClick={() => router.push('/dashboard')}
-                className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400"
+                className="flex items-center space-x-2 group transition-all duration-200"
               >
-                Musga
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                  <span className="text-white font-bold text-sm">M</span>
+                </div>
+                <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                  Musga
+                </h1>
               </button>
+              <div className="hidden md:flex items-center space-x-4">
+                <div className="flex items-center space-x-1 text-purple-200">
+                  <span>⬆️</span>
+                  <span>Upload Vocal</span>
+                </div>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => router.push('/dashboard')}
-                className="text-purple-200 hover:text-white transition-colors"
+                className="flex items-center space-x-1 text-purple-200 hover:text-white transition-colors duration-200"
               >
-                Dashboard
+                <span>🏠</span>
+                <span>Dashboard</span>
               </button>
-              <span className="text-purple-200">Welcome, {user.firstName}</span>
+              <div className="flex items-center space-x-2">
+                <span className="text-purple-200">👋</span>
+                <span className="text-purple-200">Welcome, {user.firstName}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -230,16 +245,46 @@ export default function UploadPage() {
                 <label className="block text-sm font-medium text-purple-200 mb-2">
                   Key *
                 </label>
-                <input
-                  type="text"
+                <select
                   name="key"
                   value={formData.key}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 bg-black bg-opacity-30 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-400"
-                  placeholder="e.g., C major, A minor"
                   disabled={uploading}
                   required
-                />
+                >
+                  <option value="">Select a key</option>
+                  <option value="C major">C major</option>
+                  <option value="G major">G major</option>
+                  <option value="D major">D major</option>
+                  <option value="A major">A major</option>
+                  <option value="E major">E major</option>
+                  <option value="B major">B major</option>
+                  <option value="F# major">F# major</option>
+                  <option value="C# major">C# major</option>
+                  <option value="F major">F major</option>
+                  <option value="Bb major">Bb major</option>
+                  <option value="Eb major">Eb major</option>
+                  <option value="Ab major">Ab major</option>
+                  <option value="Db major">Db major</option>
+                  <option value="Gb major">Gb major</option>
+                  <option value="Cb major">Cb major</option>
+                  <option value="A minor">A minor</option>
+                  <option value="E minor">E minor</option>
+                  <option value="B minor">B minor</option>
+                  <option value="F# minor">F# minor</option>
+                  <option value="C# minor">C# minor</option>
+                  <option value="G# minor">G# minor</option>
+                  <option value="D# minor">D# minor</option>
+                  <option value="A# minor">A# minor</option>
+                  <option value="D minor">D minor</option>
+                  <option value="G minor">G minor</option>
+                  <option value="C minor">C minor</option>
+                  <option value="F minor">F minor</option>
+                  <option value="Bb minor">Bb minor</option>
+                  <option value="Eb minor">Eb minor</option>
+                  <option value="Ab minor">Ab minor</option>
+                </select>
               </div>
 
               <div>
