@@ -41,8 +41,9 @@ export default function MyVocalsPage() {
   const fetchMyVocals = async (page: number) => {
     try {
       setLoadingVocals(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/vocals/my-vocals?page=${page}&limit=10`, {
+      const token = localStorage.getItem('authToken');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/vocals/my-vocals?page=${page}&limit=10`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

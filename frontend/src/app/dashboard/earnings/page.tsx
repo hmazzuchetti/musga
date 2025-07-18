@@ -50,17 +50,18 @@ export default function EarningsPage() {
   const fetchEarningsData = async (page: number) => {
     try {
       setLoadingData(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('authToken');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
       // Fetch sales and earnings in parallel
       const [salesResponse, earningsResponse] = await Promise.all([
-        fetch(`/api/payments/sales?page=${page}&limit=10`, {
+        fetch(`${apiUrl}/payments/sales?page=${page}&limit=10`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         }),
-        fetch('/api/payments/earnings', {
+        fetch(`${apiUrl}/payments/earnings`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
