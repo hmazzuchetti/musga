@@ -1,9 +1,20 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOptionsWhere } from 'typeorm';
 import { Vocal } from '../database/entities/vocal.entity';
 import { User } from '../database/entities/user.entity';
-import { CreateVocalDto, UpdateVocalDto, VocalSearchFilters, PaginatedResponse, UserRole } from '@musga/shared';
+import {
+  CreateVocalDto,
+  UpdateVocalDto,
+  VocalSearchFilters,
+  PaginatedResponse,
+  UserRole,
+} from '@musga/shared';
 import * as fs from 'fs';
 import * as path from 'path';
 import { spawn } from 'child_process';
@@ -17,9 +28,13 @@ export class VocalsService {
     private userRepository: Repository<User>,
   ) {}
 
-  async create(createVocalDto: CreateVocalDto, file: Express.Multer.File, userId: string): Promise<Vocal> {
+  async create(
+    createVocalDto: CreateVocalDto,
+    file: Express.Multer.File,
+    userId: string,
+  ): Promise<Vocal> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -34,7 +49,7 @@ export class VocalsService {
 
     // Get audio duration using FFmpeg
     const duration = await this.getAudioDuration(file.path);
-    
+
     // Generate preview (first 30 seconds)
     const previewPath = await this.generatePreview(file.path, file.filename);
 
@@ -50,8 +65,13 @@ export class VocalsService {
     return await this.vocalRepository.save(vocal);
   }
 
-  async findAll(filters: VocalSearchFilters, page: number = 1, limit: number = 20): Promise<PaginatedResponse<Vocal>> {
-    const query = this.vocalRepository.createQueryBuilder('vocal')
+  async findAll(
+    filters: VocalSearchFilters,
+    page: number = 1,
+    limit: number = 20,
+  ): Promise<PaginatedResponse<Vocal>> {
+    const query = this.vocalRepository
+      .createQueryBuilder('vocal')
       .leftJoinAndSelect('vocal.singer', 'singer')
       .where('vocal.isActive = :isActive', { isActive: true })
       .andWhere('vocal.isSold = :isSold', { isSold: false });
@@ -62,11 +82,15 @@ export class VocalsService {
     }
 
     if (filters.minPrice !== undefined) {
-      query.andWhere('vocal.price >= :minPrice', { minPrice: filters.minPrice });
+      query.andWhere('vocal.price >= :minPrice', {
+        minPrice: filters.minPrice,
+      });
     }
 
     if (filters.maxPrice !== undefined) {
-      query.andWhere('vocal.price <= :maxPrice', { maxPrice: filters.maxPrice });
+      query.andWhere('vocal.price <= :maxPrice', {
+        maxPrice: filters.maxPrice,
+      });
     }
 
     if (filters.minBpm !== undefined) {
@@ -82,13 +106,15 @@ export class VocalsService {
     }
 
     if (filters.licensingType) {
-      query.andWhere('vocal.licensingType = :licensingType', { licensingType: filters.licensingType });
+      query.andWhere('vocal.licensingType = :licensingType', {
+        licensingType: filters.licensingType,
+      });
     }
 
     if (filters.search) {
       query.andWhere(
         '(vocal.title ILIKE :search OR vocal.description ILIKE :search OR singer.firstName ILIKE :search OR singer.lastName ILIKE :search)',
-        { search: `%${filters.search}%` }
+        { search: `%${filters.search}%` },
       );
     }
 
@@ -126,9 +152,13 @@ export class VocalsService {
     return vocal;
   }
 
-  async findBySinger(singerId: string, page: number = 1, limit: number = 20): Promise<PaginatedResponse<Vocal>> {
+  async findBySinger(
+    singerId: string,
+    page: number = 1,
+    limit: number = 20,
+  ): Promise<PaginatedResponse<Vocal>> {
     const offset = (page - 1) * limit;
-    
+
     const [data, total] = await this.vocalRepository.findAndCount({
       where: { singerId, isActive: true },
       relations: ['singer'],
@@ -146,7 +176,11 @@ export class VocalsService {
     };
   }
 
-  async update(id: string, updateVocalDto: UpdateVocalDto, userId: string): Promise<Vocal> {
+  async update(
+    id: string,
+    updateVocalDto: UpdateVocalDto,
+    userId: string,
+  ): Promise<Vocal> {
     const vocal = await this.vocalRepository.findOne({ where: { id } });
 
     if (!vocal) {
@@ -197,16 +231,21 @@ export class VocalsService {
   }
 
   private async getAudioDuration(filePath: string): Promise<number> {
+    const ffprobePath = process.env.FFPROBE_PATH || 'ffprobe';
+
     return new Promise((resolve, reject) => {
-      const ffprobe = spawn('ffprobe', [
-        '-v', 'error',
-        '-show_entries', 'format=duration',
-        '-of', 'csv=p=0',
-        filePath
+      const ffprobe = spawn(ffprobePath, [
+        '-v',
+        'error',
+        '-show_entries',
+        'format=duration',
+        '-of',
+        'csv=p=0',
+        filePath,
       ]);
 
       let duration = '';
-      ffprobe.stdout.on('data', (data) => {
+      ffprobe.stdout.on('data', (data: Buffer) => {
         duration += data.toString();
       });
 
@@ -224,9 +263,12 @@ export class VocalsService {
     });
   }
 
-  private async generatePreview(filePath: string, originalFilename: string): Promise<string> {
+  private async generatePreview(
+    filePath: string,
+    originalFilename: string,
+  ): Promise<string> {
     const previewDir = path.join(path.dirname(filePath), 'previews');
-    
+
     // Create previews directory if it doesn't exist
     if (!fs.existsSync(previewDir)) {
       fs.mkdirSync(previewDir, { recursive: true });
@@ -235,15 +277,22 @@ export class VocalsService {
     const previewFilename = `preview-${originalFilename}`;
     const previewPath = path.join(previewDir, previewFilename);
 
+    const ffmpegPath = process.env.FFMPEG_PATH || 'ffmpeg';
+
     return new Promise((resolve, reject) => {
-      const ffmpeg = spawn('ffmpeg', [
-        '-i', filePath,
-        '-t', '30', // 30 seconds
-        '-acodec', 'mp3',
-        '-ab', '128k',
-        '-ar', '44100',
+      const ffmpeg = spawn(ffmpegPath, [
+        '-i',
+        filePath,
+        '-t',
+        '30', // 30 seconds
+        '-acodec',
+        'mp3',
+        '-ab',
+        '128k',
+        '-ar',
+        '44100',
         '-y', // overwrite output file
-        previewPath
+        previewPath,
       ]);
 
       ffmpeg.on('close', (code) => {

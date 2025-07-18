@@ -1,10 +1,23 @@
-import { Controller, Post, Body, Get, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginDto, AuthResponse } from '@musga/shared';
 import { Public } from './decorators/public.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { User } from '../database/entities/user.entity';
+
+export type UserResponse = Omit<
+  User,
+  'password' | 'hashPassword' | 'validatePassword'
+>;
 
 @Controller('auth')
 export class AuthController {
@@ -25,19 +38,23 @@ export class AuthController {
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
-  async getProfile(@CurrentUser() user: User): Promise<Omit<User, 'password'>> {
-    // Remove password from response
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+  async getProfile(@CurrentUser() user: User): Promise<UserResponse> {
+    // Remove password and methods from response
+    const { password, hashPassword, validatePassword, ...userWithoutPassword } =
+      user;
+    return userWithoutPassword as UserResponse;
   }
 
   @Get('verify')
   @UseGuards(JwtAuthGuard)
-  async verifyToken(@CurrentUser() user: User): Promise<{ valid: boolean; user: Omit<User, 'password'> }> {
-    const { password, ...userWithoutPassword } = user;
+  async verifyToken(
+    @CurrentUser() user: User,
+  ): Promise<{ valid: boolean; user: UserResponse }> {
+    const { password, hashPassword, validatePassword, ...userWithoutPassword } =
+      user;
     return {
       valid: true,
-      user: userWithoutPassword,
+      user: userWithoutPassword as UserResponse,
     };
   }
 }
