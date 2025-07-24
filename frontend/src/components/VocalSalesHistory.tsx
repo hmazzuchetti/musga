@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Transaction } from '@musga/shared';
+import React, { useState, useEffect, useCallback } from 'react';
 
 interface VocalSalesHistoryProps {
   vocalId: string;
@@ -24,12 +23,7 @@ export default function VocalSalesHistory({ vocalId }: VocalSalesHistoryProps) {
   const [sales, setSales] = useState<VocalSale[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    fetchVocalSales();
-  }, [vocalId]);
-
-  const fetchVocalSales = async () => {
+  const fetchVocalSales = useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('authToken');
@@ -53,7 +47,11 @@ export default function VocalSalesHistory({ vocalId }: VocalSalesHistoryProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [vocalId]);
+
+  useEffect(() => {
+    fetchVocalSales();
+  }, [fetchVocalSales]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
@@ -90,16 +88,15 @@ export default function VocalSalesHistory({ vocalId }: VocalSalesHistoryProps) {
               <div className="text-purple-400 mt-1">
                 {formatDate(sale.createdAt)}
               </div>
-            </div>
-            <div className="text-right">
+            </div>            <div className="text-right">
               <div className="text-white font-medium">
-                ${sale.amount.toFixed(2)}
+                ${Number(sale.amount).toFixed(2)}
               </div>
               <div className="text-green-400">
-                You earned: ${sale.sellerAmount.toFixed(2)}
+                You earned: ${Number(sale.sellerAmount).toFixed(2)}
               </div>
               <div className="text-purple-300">
-                Fee: ${(sale.amount - sale.sellerAmount).toFixed(2)}
+                Fee: ${(Number(sale.amount) - Number(sale.sellerAmount)).toFixed(2)}
               </div>
             </div>
           </div>

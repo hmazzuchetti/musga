@@ -220,15 +220,14 @@ export default function EarningsPage() {
                             <td className="py-4">
                               <div className="text-white">{formatDate(sale.createdAt)}</div>
                               <div className="text-sm text-purple-200">{formatDateTime(sale.createdAt)}</div>
-                            </td>
-                            <td className="py-4">
-                              <div className="text-white font-medium">${sale.amount.toFixed(2)}</div>
+                            </td>                            <td className="py-4">
+                              <div className="text-white font-medium">${Number(sale.amount).toFixed(2)}</div>
                               <div className="text-sm text-purple-200">{sale.vocal.licensingType}</div>
                             </td>
                             <td className="py-4">
-                              <div className="text-green-400 font-medium">${sale.sellerAmount.toFixed(2)}</div>
+                              <div className="text-green-400 font-medium">${Number(sale.sellerAmount).toFixed(2)}</div>
                               <div className="text-sm text-purple-200">
-                                Fee: ${(sale.amount - sale.sellerAmount).toFixed(2)}
+                                Fee: ${(Number(sale.amount) - Number(sale.sellerAmount)).toFixed(2)}
                               </div>
                             </td>
                           </tr>
