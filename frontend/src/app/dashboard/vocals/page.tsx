@@ -138,7 +138,7 @@ export default function MyVocalsPage() {
           <div className="text-center py-12">
             <div className="text-white text-xl">Loading your vocals...</div>
           </div>
-        ) : vocals.vocals.length === 0 ? (
+        ) : !vocals.vocals || vocals.vocals.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-white text-xl mb-4">No vocals uploaded yet</div>
             <button
@@ -151,7 +151,7 @@ export default function MyVocalsPage() {
         ) : (
           <>
             <div className="grid gap-6">
-              {vocals.vocals.map((vocal) => (
+              {vocals.vocals?.map((vocal) => (
                 <div
                   key={vocal.id}
                   className="bg-black bg-opacity-30 backdrop-blur-lg rounded-lg p-6 border border-purple-500/20"

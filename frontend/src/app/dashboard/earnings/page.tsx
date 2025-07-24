@@ -179,7 +179,7 @@ export default function EarningsPage() {
             <div className="bg-black bg-opacity-30 backdrop-blur-lg rounded-lg p-6 border border-purple-500/20">
               <h3 className="text-xl font-semibold text-white mb-6">Sales History</h3>
               
-              {sales.sales.length === 0 ? (
+              {!sales.sales || sales.sales.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="text-purple-200 text-lg">No sales yet</div>
                   <p className="text-purple-300 mt-2">Start by uploading your vocals!</p>
@@ -198,7 +198,7 @@ export default function EarningsPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {sales.sales.map((sale) => (
+                        {sales.sales?.map((sale) => (
                           <tr key={sale.id} className="border-b border-purple-500/10">
                             <td className="py-4">
                               <div className="text-white font-medium">{sale.vocal.title}</div>
