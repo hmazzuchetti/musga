@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { UserRole, Vocal } from '@musga/shared';
+import VocalSalesHistory from '@/components/VocalSalesHistory';
 
 interface VocalResponse {
   vocals: Vocal[];
@@ -54,7 +55,17 @@ export default function MyVocalsPage() {
         throw new Error('Failed to fetch vocals');
       }
 
-      const data: VocalResponse = await response.json();
+      const dataRaw = await response.json();
+      
+      // Transform backend response to match frontend expectations
+      const data: VocalResponse = {
+        vocals: dataRaw.data || [],
+        total: dataRaw.total || 0,
+        page: dataRaw.page || 1,
+        limit: dataRaw.limit || 10,
+        totalPages: dataRaw.totalPages || 0
+      };
+      
       setVocals(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load vocals');
@@ -186,7 +197,7 @@ export default function MyVocalsPage() {
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center mb-4">
                     <div className="text-sm text-purple-200">
                       Uploaded on {formatDate(vocal.createdAt)}
                     </div>
@@ -198,6 +209,12 @@ export default function MyVocalsPage() {
                         Delete
                       </button>
                     </div>
+                  </div>
+
+                  {/* Sales History Section */}
+                  <div className="mt-4 pt-4 border-t border-purple-500/20">
+                    <h4 className="text-sm font-medium text-purple-200 mb-2">Sales History</h4>
+                    <VocalSalesHistory vocalId={vocal.id} />
                   </div>
                 </div>
               ))}

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { Vocal, Genre, LicensingType, PaginatedResponse } from '@musga/shared';
+import { Vocal, Genre, LicensingType, PaginatedResponse, UserRole } from '@musga/shared';
 import AudioPlayer from '@/components/AudioPlayer';
 import PurchaseModal from '@/components/PurchaseModal';
 
@@ -348,12 +348,22 @@ export default function BrowsePage() {
 
                   <div className="flex space-x-2">
                     {user ? (
-                      <button 
-                        onClick={() => handlePurchaseClick(vocal)}
-                        className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-2 px-4 rounded-lg text-sm transition-all"
-                      >
-                        Buy Now
-                      </button>
+                      // Check if user is the singer who uploaded this vocal
+                      user.role === UserRole.SINGER && vocal.singer?.id === user.id ? (
+                        <button 
+                          disabled
+                          className="flex-1 bg-gray-600 text-gray-300 py-2 px-4 rounded-lg text-sm cursor-not-allowed"
+                        >
+                          Your Vocal
+                        </button>
+                      ) : (
+                        <button 
+                          onClick={() => handlePurchaseClick(vocal)}
+                          className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-2 px-4 rounded-lg text-sm transition-all"
+                        >
+                          Buy Now
+                        </button>
+                      )
                     ) : (
                       <button 
                         onClick={() => router.push('/auth')}

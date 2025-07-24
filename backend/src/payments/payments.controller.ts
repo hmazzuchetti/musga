@@ -79,6 +79,7 @@ export class PaymentsController {
     @CurrentUser() user: User,
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '20',
+    @Query('vocalId') vocalId?: string,
   ): Promise<{ data: any[]; total: number; page: number; totalPages: number }> {
     const pageNum = parseInt(page, 10);
     const limitNum = parseInt(limit, 10);
@@ -91,7 +92,7 @@ export class PaymentsController {
       throw new BadRequestException('Invalid limit (1-100)');
     }
 
-    const result = await this.paymentsService.getUserSales(user.id, pageNum, limitNum);
+    const result = await this.paymentsService.getUserSales(user.id, pageNum, limitNum, vocalId);
     
     return {
       data: result.data,

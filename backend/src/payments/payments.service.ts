@@ -138,9 +138,16 @@ export class PaymentsService {
     return { data, total };
   }
 
-  async getUserSales(userId: string, page: number = 1, limit: number = 20): Promise<{ data: Transaction[]; total: number }> {
+  async getUserSales(userId: string, page: number = 1, limit: number = 20, vocalId?: string): Promise<{ data: Transaction[]; total: number }> {
+    const whereClause: any = { sellerId: userId, status: 'completed' };
+    
+    // Add vocalId filter if provided
+    if (vocalId) {
+      whereClause.vocalId = vocalId;
+    }
+
     const [data, total] = await this.transactionRepository.findAndCount({
-      where: { sellerId: userId, status: 'completed' },
+      where: whereClause,
       relations: ['vocal', 'buyer'],
       order: { createdAt: 'DESC' },
       skip: (page - 1) * limit,

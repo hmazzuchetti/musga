@@ -73,8 +73,17 @@ export default function EarningsPage() {
         throw new Error('Failed to fetch earnings data');
       }
 
-      const salesData: SalesResponse = await salesResponse.json();
+      const salesDataRaw = await salesResponse.json();
       const earningsData: EarningsResponse = await earningsResponse.json();
+
+      // Transform backend response to match frontend expectations
+      const salesData: SalesResponse = {
+        sales: salesDataRaw.data || [],
+        total: salesDataRaw.total || 0,
+        page: salesDataRaw.page || 1,
+        limit: 10,
+        totalPages: salesDataRaw.totalPages || 0
+      };
 
       setSales(salesData);
       setEarnings(earningsData);
